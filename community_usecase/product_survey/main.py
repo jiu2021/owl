@@ -63,37 +63,37 @@ def construct_society(question: str) -> RolePlaying:
     models = {
         "user": ModelFactory.create(
             model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_type=ModelType.GPT_4_1,
             model_config_dict={"temperature": 0},
         ),
         "assistant": ModelFactory.create(
             model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_type=ModelType.GPT_4_1,
             model_config_dict={"temperature": 0},
         ),
         "browsing": ModelFactory.create(
             model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_type=ModelType.GPT_4_1,
             model_config_dict={"temperature": 0},
         ),
         "planning": ModelFactory.create(
             model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_type=ModelType.GPT_4_1,
             model_config_dict={"temperature": 0},
         ),
         "video": ModelFactory.create(
             model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_type=ModelType.GPT_4_1,
             model_config_dict={"temperature": 0},
         ),
         "image": ModelFactory.create(
             model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_type=ModelType.GPT_4_1,
             model_config_dict={"temperature": 0},
         ),
         "document": ModelFactory.create(
             model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_type=ModelType.GPT_4_1,
             model_config_dict={"temperature": 0},
         ),
     }
@@ -144,7 +144,7 @@ def construct_society(question: str) -> RolePlaying:
 def main():
     r"""Main function to run the OWL system with an example question."""
     # Default research question
-    default_task = "please give me a product survey report for manus product.which official web url is https://manus.im.And then using  react framework to make a website for it.Finally,download the this web into pdf file and open it by local app.please make full use of the Browsertoolkit、TerminalToolkit、PyAutoGUIToolkit、FileWriteToolkit etc."
+    default_task = "please give me a product survey report for manus product.which official web url is https://manus.im.And then using vite to create react framework to make a ppt website for it.Finally,download the this web into pdf file and open it by local app.please make full use of the Browsertoolkit、TerminalToolkit、PyAutoGUIToolkit、FileWriteToolkit etc."
 
     # Override default task if command line argument is provided
     task = sys.argv[1] if len(sys.argv) > 1 else default_task
