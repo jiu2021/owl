@@ -144,7 +144,7 @@ def construct_society(question: str) -> RolePlaying:
 def main():
     r"""Main function to run the OWL system with an example question."""
     # Default research question
-    default_task = "please give me a product survey report for manus product.and then make a react website for it.please make full use of the Browsertoolkit、TerminalToolkit、PyAutoGUIToolkit、FileWriteToolkit etc."
+    default_task = "please give me a product survey report for manus product.and then make a react website for it.finally,download the this web into pdf file and open it.please make full use of the Browsertoolkit、TerminalToolkit、PyAutoGUIToolkit、FileWriteToolkit etc."
 
     # Override default task if command line argument is provided
     task = sys.argv[1] if len(sys.argv) > 1 else default_task
