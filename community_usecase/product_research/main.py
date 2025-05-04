@@ -63,37 +63,37 @@ def construct_society(question: str) -> RolePlaying:
     models = {
         "user": ModelFactory.create(
             model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_type=ModelType.GPT_4O_MINI,
             model_config_dict={"temperature": 0},
         ),
         "assistant": ModelFactory.create(
             model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_type=ModelType.GPT_4O_MINI,
             model_config_dict={"temperature": 0},
         ),
         "browsing": ModelFactory.create(
             model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_type=ModelType.GPT_4O_MINI,
             model_config_dict={"temperature": 0},
         ),
         "planning": ModelFactory.create(
             model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_type=ModelType.GPT_4O_MINI,
             model_config_dict={"temperature": 0},
         ),
         "video": ModelFactory.create(
             model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_type=ModelType.GPT_4O_MINI,
             model_config_dict={"temperature": 0},
         ),
         "image": ModelFactory.create(
             model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_type=ModelType.GPT_4O_MINI,
             model_config_dict={"temperature": 0},
         ),
         "document": ModelFactory.create(
             model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_type=ModelType.GPT_4O_MINI,
             model_config_dict={"temperature": 0},
         ),
     }
@@ -108,7 +108,7 @@ def construct_society(question: str) -> RolePlaying:
         *PyAutoGUIToolkit().get_tools(),
         *TerminalToolkit(working_dir=workspace_dir).get_tools(),
         *VideoAnalysisToolkit(model=models["video"]).get_tools(),
-        *AudioAnalysisToolkit().get_tools(),  # This requires OpenAI Key
+        *AudioAnalysisToolkit().get_tools(),  # This requires OPENAI Key
         *CodeExecutionToolkit(sandbox="subprocess", verbose=True).get_tools(),
         *ImageAnalysisToolkit(model=models["image"]).get_tools(),
         # SearchToolkit().search_duckduckgo,
@@ -145,10 +145,22 @@ def main():
     r"""Main function to run the OWL system with an example question."""
     # Default research question
     default_task = """
-please give me a product research report for Manus vs OWL.there are official web url are https://manus.im and https://github.com/camel-ai/owl.
-and then put the content in markdown format.then using markdown-pdf to convert the markdown file into pdf file. refer:https://www.npmjs.com/package/markdown-pdf.
-Finally,search the suitable local app to open this pdf by local app.please make full use of the Browsertoolkit、TerminalToolkit、PyAutoGUIToolkit、FileWriteToolkit etc.
+please  give me a very long and detail product research report for  Manus vs OWL.
+firstly, you need to use Browsertoolkit to brower there official web or repo:
+ Manus:https://manus.im/
+ OWL：https://github.com/camel-ai/owl.
+
+then, you need to use TerminalToolkit to create a markdown file to write the product research report.
+after you create the markdown,you need to check the product research report markdown file path by TerminalToolkit.
+and then put the content in markdown format.then write a script which using markdown-pdf to convert the markdown file into pdf file. package using refer:https://www.npmjs.com/package/markdown-pdf.
+Finally,search the suitable local app to open this pdf by local app.and then using PyAutoGUITOOkit scroll down the pdf for user.
+please make full use of the Browsertoolkit、TerminalToolkit、PyAutoGUIToolkit、FileWriteToolkit etc.
 """
+#     default_task = """
+# please give me a product research report for Manus vs OWL.there are official web url are https://manus.im and https://github.com/camel-ai/owl.
+# and then put the content in markdown format.then using markdown-pdf to convert the markdown file into pdf file. refer:https://www.npmjs.com/package/markdown-pdf.
+# Finally,search the suitable local app to open this pdf by local app.please make full use of the Browsertoolkit、TerminalToolkit、PyAutoGUIToolkit、FileWriteToolkit etc.
+# """
 
     # Override default task if command line argument is provided
     task = sys.argv[1] if len(sys.argv) > 1 else default_task
