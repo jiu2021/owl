@@ -14,14 +14,10 @@
 import sys
 import pathlib
 from dotenv import load_dotenv
+from camel.configs import MistralConfig
 from camel.models import ModelFactory
 from camel.toolkits import (
-    AudioAnalysisToolkit,
-    CodeExecutionToolkit,
-    ExcelToolkit,
-    ImageAnalysisToolkit,
     SearchToolkit,
-    VideoAnalysisToolkit,
     BrowserToolkit,
     FileWriteToolkit,
 )
@@ -51,40 +47,63 @@ def construct_society(question: str) -> RolePlaying:
     # Create models for different components
     models = {
         "user": ModelFactory.create(
-            model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+<<<<<<<< HEAD:community_usecase/Smart_city_research/main.py
+            model_platform=ModelPlatformType.MISTRAL,
+            model_type=ModelType.MISTRAL_LARGE,
+            model_config_dict=MistralConfig(temperature=0.0).as_dict(),
+        ),
+        "assistant": ModelFactory.create(
+            model_platform=ModelPlatformType.MISTRAL,
+            model_type=ModelType.MISTRAL_LARGE,
+            model_config_dict=MistralConfig(temperature=0.0).as_dict(),
+        ),
+        "browsing": ModelFactory.create(
+            model_platform=ModelPlatformType.MISTRAL,
+            model_type=ModelType.MISTRAL_LARGE,
+            model_config_dict=MistralConfig(temperature=0.0).as_dict(),
+        ),
+        "planning": ModelFactory.create(
+            model_platform=ModelPlatformType.MISTRAL,
+            model_type=ModelType.MISTRAL_LARGE,
+            model_config_dict=MistralConfig(temperature=0.0).as_dict(),
+========
+            model_platform=ModelPlatformType.ANTHROPIC,
+            model_type=ModelType.CLAUDE_3_7_SONNET,
             model_config_dict={"temperature": 0},
         ),
         "assistant": ModelFactory.create(
-            model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_platform=ModelPlatformType.ANTHROPIC,
+            model_type=ModelType.CLAUDE_3_7_SONNET,
             model_config_dict={"temperature": 0},
         ),
         "browsing": ModelFactory.create(
-            model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_platform=ModelPlatformType.ANTHROPIC,
+            model_type=ModelType.CLAUDE_3_7_SONNET,
             model_config_dict={"temperature": 0},
         ),
         "planning": ModelFactory.create(
-            model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_platform=ModelPlatformType.ANTHROPIC,
+            model_type=ModelType.CLAUDE_3_7_SONNET,
             model_config_dict={"temperature": 0},
         ),
         "video": ModelFactory.create(
-            model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_platform=ModelPlatformType.ANTHROPIC,
+            model_type=ModelType.CLAUDE_3_7_SONNET,
             model_config_dict={"temperature": 0},
         ),
         "image": ModelFactory.create(
-            model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_platform=ModelPlatformType.ANTHROPIC,
+            model_type=ModelType.CLAUDE_3_7_SONNET,
             model_config_dict={"temperature": 0},
         ),
         "document": ModelFactory.create(
-            model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O,
+            model_platform=ModelPlatformType.ANTHROPIC,
+            model_type=ModelType.CLAUDE_3_7_SONNET,
             model_config_dict={"temperature": 0},
+>>>>>>>> main:examples/run_claude.py
         ),
+     
+
     }
 
     # Configure toolkits
@@ -94,14 +113,19 @@ def construct_society(question: str) -> RolePlaying:
             web_agent_model=models["browsing"],
             planning_agent_model=models["planning"],
         ).get_tools(),
+<<<<<<<< HEAD:community_usecase/Smart_city_research/main.py
+        *PyAutoGUIToolkit().get_tools(),
+        *TerminalToolkit(working_dir=workspace_dir).get_tools(),
+        # SearchToolkit().search_duckduckgo,
+        SearchToolkit().search_google,  # Comment this out if you don't have google search
+========
         *VideoAnalysisToolkit(model=models["video"]).get_tools(),
-        *AudioAnalysisToolkit().get_tools(),  # This requires OpenAI Key
         *CodeExecutionToolkit(sandbox="subprocess", verbose=True).get_tools(),
         *ImageAnalysisToolkit(model=models["image"]).get_tools(),
         SearchToolkit().search_duckduckgo,
-        SearchToolkit().search_google,  # Comment this out if you don't have google search
         SearchToolkit().search_wiki,
         *ExcelToolkit().get_tools(),
+>>>>>>>> main:examples/run_claude.py
         *DocumentProcessingToolkit(model=models["document"]).get_tools(),
         *FileWriteToolkit(output_dir="./").get_tools(),
     ]
@@ -131,7 +155,25 @@ def construct_society(question: str) -> RolePlaying:
 def main():
     r"""Main function to run the OWL system with an example question."""
     # Default research question
+<<<<<<<< HEAD:community_usecase/Smart_city_research/main.py
+    default_task = """Conduct a comprehensive research on smart city technologies and implementations:
+
+1. Search for the latest smart city initiatives in major global cities and identify common technologies they use.
+2. Browse official websites of 2-3 leading smart city technology providers to understand their key solutions.
+3. Analyze how IoT sensors, AI, and data analytics are integrated in traffic management and public transportation systems.
+4. Research case studies of successful smart city implementations that reduced energy consumption and carbon emissions.
+5. Investigate privacy and security concerns in smart city data collection.
+6. Create a brief report documenting your findings, including:
+   - Top 5 emerging smart city technologies
+   - Success metrics used to evaluate smart city projects
+   - Implementation challenges and solutions
+   - Future trends in smart urban planning
+   
+Save the report as 'smart_city_research.md' in the current directory with properly formatted sections.
+"""
+========
     default_task = "Open Brave search, summarize the github stars, fork counts, etc. of camel-ai's camel framework, and write the numbers into a python file using the plot package, save it locally, and run the generated python file. Note: You have been provided with the necessary tools to complete this task."
+>>>>>>>> main:examples/run_claude.py
 
     # Override default task if command line argument is provided
     task = sys.argv[1] if len(sys.argv) > 1 else default_task
