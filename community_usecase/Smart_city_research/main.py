@@ -14,14 +14,10 @@
 import sys
 import pathlib
 from dotenv import load_dotenv
+from camel.configs import MistralConfig
 from camel.models import ModelFactory
 from camel.toolkits import (
-    AudioAnalysisToolkit,
-    CodeExecutionToolkit,
-    ExcelToolkit,
-    ImageAnalysisToolkit,
     SearchToolkit,
-    VideoAnalysisToolkit,
     BrowserToolkit,
     FileWriteToolkit,
     TerminalToolkit,
@@ -62,40 +58,27 @@ def construct_society(question: str) -> RolePlaying:
     # Create models for different components
     models = {
         "user": ModelFactory.create(
-            model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O_MINI,
-            model_config_dict={"temperature": 0},
+            model_platform=ModelPlatformType.MISTRAL,
+            model_type=ModelType.MISTRAL_LARGE,
+            model_config_dict=MistralConfig(temperature=0.0).as_dict(),
         ),
         "assistant": ModelFactory.create(
-            model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O_MINI,
-            model_config_dict={"temperature": 0},
+            model_platform=ModelPlatformType.MISTRAL,
+            model_type=ModelType.MISTRAL_LARGE,
+            model_config_dict=MistralConfig(temperature=0.0).as_dict(),
         ),
         "browsing": ModelFactory.create(
-            model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O_MINI,
-            model_config_dict={"temperature": 0},
+            model_platform=ModelPlatformType.MISTRAL,
+            model_type=ModelType.MISTRAL_LARGE,
+            model_config_dict=MistralConfig(temperature=0.0).as_dict(),
         ),
         "planning": ModelFactory.create(
-            model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O_MINI,
-            model_config_dict={"temperature": 0},
+            model_platform=ModelPlatformType.MISTRAL,
+            model_type=ModelType.MISTRAL_LARGE,
+            model_config_dict=MistralConfig(temperature=0.0).as_dict(),
         ),
-        "video": ModelFactory.create(
-            model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O_MINI,
-            model_config_dict={"temperature": 0},
-        ),
-        "image": ModelFactory.create(
-            model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O_MINI,
-            model_config_dict={"temperature": 0},
-        ),
-        "document": ModelFactory.create(
-            model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_4O_MINI,
-            model_config_dict={"temperature": 0},
-        ),
+     
+
     }
 
     # Configure toolkits
@@ -107,14 +90,8 @@ def construct_society(question: str) -> RolePlaying:
         ).get_tools(),
         *PyAutoGUIToolkit().get_tools(),
         *TerminalToolkit(working_dir=workspace_dir).get_tools(),
-        *VideoAnalysisToolkit(model=models["video"]).get_tools(),
-        *AudioAnalysisToolkit().get_tools(),  # This requires OPENAI Key
-        *CodeExecutionToolkit(sandbox="subprocess", verbose=True).get_tools(),
-        *ImageAnalysisToolkit(model=models["image"]).get_tools(),
         # SearchToolkit().search_duckduckgo,
         SearchToolkit().search_google,  # Comment this out if you don't have google search
-        SearchToolkit().search_wiki,
-        *ExcelToolkit().get_tools(),
         *DocumentProcessingToolkit(model=models["document"]).get_tools(),
         *FileWriteToolkit(output_dir="./").get_tools(),
     ]
@@ -144,23 +121,21 @@ def construct_society(question: str) -> RolePlaying:
 def main():
     r"""Main function to run the OWL system with an example question."""
     # Default research question
-    default_task = """
-please  give me a very long and detail product research report for  Manus vs OWL.
-firstly, you need to use Browsertoolkit to brower there official web or repo:
- Manus:https://manus.im/
- OWL：https://github.com/camel-ai/owl.
+    default_task = """Conduct a comprehensive research on smart city technologies and implementations:
 
-then, you need to use TerminalToolkit to create a markdown file to write the product research report.
-after you create the markdown,you need to check the product research report markdown file path by TerminalToolkit.
-and then put the content in markdown format.then write a script which using markdown-pdf to convert the markdown file into pdf file. package using refer:https://www.npmjs.com/package/markdown-pdf.
-Finally,search the suitable local app to open this pdf by local app.and then using PyAutoGUITOOkit scroll down the pdf for user.
-please make full use of the Browsertoolkit、TerminalToolkit、PyAutoGUIToolkit、FileWriteToolkit etc.
+1. Search for the latest smart city initiatives in major global cities and identify common technologies they use.
+2. Browse official websites of 2-3 leading smart city technology providers to understand their key solutions.
+3. Analyze how IoT sensors, AI, and data analytics are integrated in traffic management and public transportation systems.
+4. Research case studies of successful smart city implementations that reduced energy consumption and carbon emissions.
+5. Investigate privacy and security concerns in smart city data collection.
+6. Create a brief report documenting your findings, including:
+   - Top 5 emerging smart city technologies
+   - Success metrics used to evaluate smart city projects
+   - Implementation challenges and solutions
+   - Future trends in smart urban planning
+   
+Save the report as 'smart_city_research.md' in the current directory with properly formatted sections.
 """
-#     default_task = """
-# please give me a product research report for Manus vs OWL.there are official web url are https://manus.im and https://github.com/camel-ai/owl.
-# and then put the content in markdown format.then using markdown-pdf to convert the markdown file into pdf file. refer:https://www.npmjs.com/package/markdown-pdf.
-# Finally,search the suitable local app to open this pdf by local app.please make full use of the Browsertoolkit、TerminalToolkit、PyAutoGUIToolkit、FileWriteToolkit etc.
-# """
 
     # Override default task if command line argument is provided
     task = sys.argv[1] if len(sys.argv) > 1 else default_task
