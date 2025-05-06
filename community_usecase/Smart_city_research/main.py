@@ -67,6 +67,11 @@ def construct_society(question: str) -> RolePlaying:
             model_type=ModelType.MISTRAL_LARGE,
             model_config_dict=MistralConfig(temperature=0.0).as_dict(),
         ),
+        "document": ModelFactory.create(
+            model_platform=ModelPlatformType.MISTRAL,
+            model_type=ModelType.MISTRAL_LARGE,
+            model_config_dict=MistralConfig(temperature=0.0).as_dict(),
+        ),
         "browsing": ModelFactory.create(
             model_platform=ModelPlatformType.MISTRAL,
             model_type=ModelType.MISTRAL_LARGE,
