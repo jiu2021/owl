@@ -59,22 +59,22 @@ def construct_society(question: str) -> RolePlaying:
     models = {
         "user": ModelFactory.create(
             model_platform=ModelPlatformType.MISTRAL,
-            model_type=ModelType.MISTRAL_LARGE,
+            model_type="pixtral-large-latest",
             model_config_dict=MistralConfig(temperature=0.0).as_dict(),
         ),
         "assistant": ModelFactory.create(
             model_platform=ModelPlatformType.MISTRAL,
-            model_type=ModelType.MISTRAL_LARGE,
+            model_type="pixtral-large-latest",
             model_config_dict=MistralConfig(temperature=0.0).as_dict(),
         ),
         "document": ModelFactory.create(
             model_platform=ModelPlatformType.MISTRAL,
-            model_type=ModelType.MISTRAL_LARGE,
+            model_type="pixtral-large-latest",
             model_config_dict=MistralConfig(temperature=0.0).as_dict(),
         ),
         "browsing": ModelFactory.create(
             model_platform=ModelPlatformType.MISTRAL,
-            model_type=ModelType.MISTRAL_LARGE,
+            model_type="pixtral-large-latest",
             model_config_dict=MistralConfig(temperature=0.0).as_dict(),
         ),
         "planning": ModelFactory.create(
@@ -95,8 +95,8 @@ def construct_society(question: str) -> RolePlaying:
         ).get_tools(),
         *PyAutoGUIToolkit().get_tools(),
         *TerminalToolkit(working_dir=workspace_dir).get_tools(),
-        # SearchToolkit().search_duckduckgo,
-        SearchToolkit().search_google,  # Comment this out if you don't have google search
+        SearchToolkit().search_duckduckgo,
+        # SearchToolkit().search_google,  # Comment this out if you don't have google search
         *DocumentProcessingToolkit(model=models["document"]).get_tools(),
         *FileWriteToolkit(output_dir="./").get_tools(),
     ]
@@ -126,20 +126,18 @@ def construct_society(question: str) -> RolePlaying:
 def main():
     r"""Main function to run the OWL system with an example question."""
     # Default research question
-    default_task = """Conduct a comprehensive research on smart city technologies and implementations:
+    default_task = """
+please help me to make a research on smart city technology.
+Fisrtly, please use the duckduckgo search  to search the following topic:
+What are the current trends in smart city technology?
+and then,only browse the most related website urls to get the information.
 
-1. Search for the latest smart city initiatives in major global cities and identify common technologies they use.
-2. Browse official websites of 2-3 leading smart city technology providers to understand their key solutions.
-3. Analyze how IoT sensors, AI, and data analytics are integrated in traffic management and public transportation systems.
-4. Research case studies of successful smart city implementations that reduced energy consumption and carbon emissions.
-5. Investigate privacy and security concerns in smart city data collection.
-6. Create a brief report documenting your findings, including:
-   - Top 5 emerging smart city technologies
-   - Success metrics used to evaluate smart city projects
-   - Implementation challenges and solutions
-   - Future trends in smart urban planning
-   
-Save the report as 'smart_city_research.md' in the current directory with properly formatted sections.
+secondly, make a pdf for me to present the research results.
+
+finally, open the pdf and take screenshot for me.
+if there are some packages that are not installed, please install them for me.
+
+
 """
 
     # Override default task if command line argument is provided
