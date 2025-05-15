@@ -1229,7 +1229,6 @@ Your output should be in json format, including the following fields:
         else:
             simulation_result = self._get_final_answer(task_prompt)
         
-        self.browser.close()
         return simulation_result
         
     
