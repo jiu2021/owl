@@ -76,12 +76,13 @@ def main():
     tools = [
         *WebToolkit(
             headless=True,  # Set to True for headless mode (e.g., on remote servers)
+            cache_dir=cache_dir,
             web_agent_model=models["web"],
             planning_agent_model=models["planning"],
         ).get_tools(),
-        *DocumentProcessingToolkit().get_tools(),
-        *VideoAnalysisToolkit(model=models["video"]).get_tools(),  # This requires OpenAI Key
-        *AudioAnalysisToolkit().get_tools(),  # This requires OpenAI Key
+        *DocumentProcessingToolkit(cache_dir=cache_dir).get_tools(),
+        *VideoAnalysisToolkit(model=models["video"], download_directory=cache_dir).get_tools(),  # This requires OpenAI Key
+        *AudioAnalysisToolkit(cache_dir=cache_dir, reasoning=True).get_tools(),  # This requires OpenAI Key
         *CodeExecutionToolkit(sandbox="subprocess", verbose=True).get_tools(),
         *ImageAnalysisToolkit(model=models["image"]).get_tools(),
         *SearchToolkit(model=models["search"]).get_tools(),
