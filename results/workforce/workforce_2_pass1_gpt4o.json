@@ -1,0 +1,12 @@
+[
+    {
+        "task_id": "f0f46385-fc03-4599-b5d3-f56496c3e69f",
+        "question": "In terms of geographical distance between capital cities, which 2 countries are the furthest from each other within the ASEAN bloc according to wikipedia? Answer using a comma separated list, ordering the countries by alphabetical order.",
+        "level": 2,
+        "model_answer": null,
+        "ground_truth": "Indonesia, Myanmar",
+        "score": false,
+        "attempts": 1,
+        "trajectory": []
+    }
+]

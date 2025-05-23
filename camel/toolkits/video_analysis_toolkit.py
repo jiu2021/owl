@@ -64,6 +64,7 @@ class VideoAnalysisToolkit(BaseToolkit):
         os.environ["GOOGLE_API_KEY"] = "AIzaSyAAxRMtgD_Zm-clKO6zqMUXnkdqi_NIZm0"
         
         import pathlib
+
         from google import genai
         from google.genai import types
         

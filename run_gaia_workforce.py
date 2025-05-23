@@ -209,13 +209,13 @@ def construct_workforce() -> OwlGaiaWorkforce:
 
 def evaluate_on_gaia():
     
-    LEVEL = 1
+    LEVEL = 2
     on="valid"
     SAVE_RESULT = True
     MAX_TRIES = 1
     
     SAVE_RESULT_PATH = f"results/workforce/workforce_{LEVEL}_pass{MAX_TRIES}_gpt4o.json"
-    test_idx = [1]
+    test_idx = [13]
 
     if os.path.exists(f"tmp/"):
         shutil.rmtree(f"tmp/")

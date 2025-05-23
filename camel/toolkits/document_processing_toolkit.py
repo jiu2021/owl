@@ -361,7 +361,7 @@ Query:
     @retry(RuntimeError, delay=60, backoff=2, max_delay=120)
     def _extract_webpage_content(self, url: str) -> str:
         api_key = os.getenv("FIRECRAWL_API_KEY")
-        from firecrawl import FirecrawlApp
+        from firecrawl import FirecrawlApp, ScrapeOptions
 
         # Initialize the FirecrawlApp with your API key
         app = FirecrawlApp(api_key=api_key)
@@ -369,10 +369,8 @@ Query:
         try:
             data = app.crawl_url(
                 url,
-                params={
-                'limit': 1,
-                'scrapeOptions': {'formats': ['markdown']}
-            }
+                limit=1,
+                scrape_options=ScrapeOptions(formats=['markdown'])
         )
             
         except Exception as e:
