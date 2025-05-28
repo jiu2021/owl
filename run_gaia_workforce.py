@@ -209,7 +209,7 @@ def construct_workforce() -> OwlGaiaWorkforce:
 
 def evaluate_on_gaia():
     
-    LEVEL = 2
+    LEVEL = 3
     on="valid"
     SAVE_RESULT = True
     MAX_TRIES = 1

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Multi-Agent Collaboration Viewer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>AI Multi-Agent Collaboration Viewer</h1>
+
+        <div class="controls">
+            <label for="task-select">Select Task ID:</label>
+            <select id="task-select"></select>
+            <button id="fetch-button">Fetch Details</button>
+        </div>
+
+        <div id="visualization-area">
+            <h2>Collaboration Details</h2>
+            <div id="collaboration-details">
+                <p>Select a task ID and click "Fetch Details" to see the collaboration workflow.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
