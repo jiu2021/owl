@@ -45,7 +45,7 @@ class AudioAnalysisToolkit(BaseToolkit):
         self.client = openai.OpenAI()
         self.audio_reasoning_model = audio_reasoning_model
         
-    def get_audio_duration(file_path):
+    def get_audio_duration(self, file_path):
         info = mediainfo(file_path)
         duration = float(info['duration'])
         return duration
@@ -106,6 +106,9 @@ class AudioAnalysisToolkit(BaseToolkit):
                 "You are a helpful assistant that can answer questions about the given speech transcription.",
                 model=self.audio_reasoning_model
                 )
+            
+            # get the duration of the audio
+            duration = self.get_audio_duration(audio_path)
             
             reasoning_result = audio_reasoning_agent.step(reasoning_prompt)
             response: str = str(reasoning_result.msg.content)
