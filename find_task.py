@@ -33,8 +33,8 @@ if __name__ == "__main__":
     for file in os.listdir("/home/kaji/owl/data/gaia/2023/validation/"):
         task_id = file.split('.')[0]
         file_type = file.split('.')[-1]
-        if file_type not in ['mp3', 'jpg', 'png']:
-            continue
+        # if file_type not in ['mp3', 'jpg', 'png']:
+        #     continue
         workforce_res = find_task_in_workforce(task_id)
         if workforce_res is None:
             # print(f"Task ID: {task_id} not found in any workforce")
