@@ -162,6 +162,24 @@ def _extract_streamed_openai_response(chunks: List[Any]):
     )
 
 
+@observe(name="request")
+def _trace_post_request(content: bytes):
+    """追踪POST请求。"""
+    # TODO: 更健壮的解码处理
+    request_body = content.decode("utf-8", "replace")
+    try:
+        body = json.loads(request_body)
+    except json.JSONDecodeError:
+        logger.error(f"json.JSONDecodeError: {request_body}")
+        body = request_body
+
+    msg = {"step": "request", "body": body}
+    logger.debug(f"Request body: \n{msg}")
+    langfuse_context.update_current_trace(
+        input=body,
+    )
+
+
 @observe(name="response", as_type="generation")
 def _trace_post_response(data_list: List[Any]):
     """追踪POST响应。"""
@@ -217,37 +235,6 @@ def _trace_post_response(data_list: List[Any]):
 
 
 class OpenAIProxyHandler(http.server.BaseHTTPRequestHandler):
-    STOP_TOKEN = None
-
-    def _hit_stop_token(self, line: str):
-        """检查是否命中STOP_TOKEN。"""
-        # TODO: 测试并发情况
-        if not self.STOP_TOKEN:
-            return False
-        return self.STOP_TOKEN in line.lower()
-
-    @observe(name="request")
-    def _trace_post_request(self, content: bytes):
-        """追踪POST请求。"""
-        # TODO: 更健壮的解码处理
-        request_body = content.decode("utf-8", "replace")
-        try:
-            body = json.loads(request_body)
-            if isinstance(body, dict):
-                if base_llm_arguments := body.get("base_llm_arguments", {}):
-                    if stop_tokens := base_llm_arguments.get("stop", []):
-                        logger.debug(f"stop_tokens: {stop_tokens}")
-                        self.STOP_TOKEN = stop_tokens[0]
-            logger.debug(f"STOP_TOKEN: {self.STOP_TOKEN}")
-        except json.JSONDecodeError:
-            logger.error(f"json.JSONDecodeError: {request_body}")
-            body = request_body
-
-        msg = {"step": "request", "body": body}
-        logger.debug(f"Request body: \n{msg}")
-        langfuse_context.update_current_trace(
-            input=body,
-        )
 
     def _create_target_request(self, method: str, body: bytes, headers: Dict[str, str]):
         """创建目标LLM服务请求"""
@@ -320,20 +307,17 @@ class OpenAIProxyHandler(http.server.BaseHTTPRequestHandler):
                 logger.error(f"json.JSONDecodeError: {content}")
                 data_list.append(content)
 
-            if line.startswith("data:") and self._hit_stop_token(line):
-                # FIXME: 触发STOP_TOKEN幻觉（仅处理流式回复）
-                logger.warning(f"Hit STOP_TOKEN: {line}")
+            obv_token = "Observation:"
+            if line.startswith("data:") and obv_token in line:
+                # FIXME: 触发ReACT的Observation幻觉（仅处理流式回复）
+                logger.warning(f"Hit ReACT observation: {line}")
                 self.wfile.write((line + "\n\n").encode("utf-8"))
                 self.wfile.write(b"data: [DONE]\n")
                 self.wfile.flush()
                 break
 
-            try:
-                self.wfile.write((line + "\n\n").encode("utf-8"))
-                self.wfile.flush()
-            except BrokenPipeError as e:
-                logger.error(f"BrokenPipeError: {line}")
-                raise e
+            self.wfile.write((line + "\n\n").encode("utf-8"))
+            self.wfile.flush()
 
         # 记录回复数据
         _trace_post_response(data_list)
@@ -357,9 +341,6 @@ class OpenAIProxyHandler(http.server.BaseHTTPRequestHandler):
                 explain = e.read().decode("utf-8", "replace")
 
             self.send_error(e.code, e.reason, str(explain))
-        except BrokenPipeError as e:
-            logger.error(f"BrokenPipeError: {e}")
-            return
         except Exception as e:
             # 处理其他异常，返回500错误
             self.send_error(500, str(e))
@@ -384,12 +365,14 @@ class OpenAIProxyHandler(http.server.BaseHTTPRequestHandler):
             }
         )
 
-        if request_id := self.headers.get("Client-Request-Id", None):
+        request_id = self.headers.get("Client-Request-Id", None)
+        if request_id:
             logger.debug(f"Client-Request-Id: {request_id}")
             langfuse_context.update_current_trace(
                 session_id=request_id
             )
-        if topic_id := self.headers.get("Topic-Id", None):
+        topic_id = self.headers.get("Topic-Id", None)
+        if topic_id:
             logger.debug(f"Topic-Id: {topic_id}")
             langfuse_context.update_current_trace(
                 tags=[topic_id]
@@ -400,7 +383,7 @@ class OpenAIProxyHandler(http.server.BaseHTTPRequestHandler):
             content = self.rfile.read(content_length)
             logger.debug(f"Read content length: {len(content)}")
             # 记录请求数据
-            self._trace_post_request(content)
+            _trace_post_request(content)
         else:
             content = None
 

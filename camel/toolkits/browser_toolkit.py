@@ -2185,6 +2185,7 @@ class AsyncBrowserToolkit(BaseToolkit):
         web_agent_model: Optional[BaseModelBackend] = None,
         planning_agent_model: Optional[BaseModelBackend] = None,
         output_language: str = "en",
+        max_replan_times: int = 3
     ):
         
         r"""Initialize the AsyncBrowserToolkit instance.
@@ -2208,11 +2209,14 @@ class AsyncBrowserToolkit(BaseToolkit):
 
         self.history: list = []
         self.web_agent, self.planning_agent = self._initialize_agent()
+        self.max_replan_times = max_replan_times
+        self.replan_times = 0
         
     def _reset(self):
         self.web_agent.reset()
         self.planning_agent.reset()
         self.history = []
+        self.replan_times = 0
         os.makedirs(self.browser.cache_dir, exist_ok=True)
     
     def _initialize_agent(self) -> Tuple["ChatAgent", "ChatAgent"]:
@@ -2603,7 +2607,7 @@ class AsyncBrowserToolkit(BaseToolkit):
 
         if_need_replan = resp_dict.get("if_need_replan", False)
         replanned_schema = resp_dict.get("replanned_schema", "")
-
+        self.replan_times += 1
         if if_need_replan:
             return True, replanned_schema
         else:
@@ -2681,9 +2685,10 @@ class AsyncBrowserToolkit(BaseToolkit):
                 if_need_replan, replanned_schema = self._task_replanning(
                     task_prompt, detailed_plan
                 )
-                if if_need_replan:
+                
+                if if_need_replan and self.replan_times <= self.max_replan_times:
                     detailed_plan = replanned_schema
-                    logger.debug(f"Replanned schema: {replanned_schema}")
+                    logger.debug(f"Replanned schema: {replanned_schema}, replan_times: {self.replan_times}")
 
         if not task_completed:
             simulation_result = f"""

@@ -391,7 +391,14 @@ Query:
                 raise e
 
         logger.debug(f"Extracted data from {url} using firecrawl: {data}")
-        if len(data['data']) == 0:
+        # logger.debug('======================')
+        # logger.debug(type(data))       # 很可能是 CrawlStatusResponse
+        # logger.debug(type(data.data))
+        # logger.debug(data.data[0])
+        # logger.debug(type(data.data[0]['markdown']))
+        # logger.debug(type(data.data[0].markdown))
+        # if len(data['data']) == 0:
+        if len(data.data) == 0:
             if data['success'] == True:
                 logger.debug(f"Trying to use html2text to get the text.")
                 # try using html2text to get the text
@@ -406,7 +413,7 @@ Query:
             else:
                 return "Error while crawling the webpage."
 
-        return str(data['data'][0]['markdown'])
+        return str(data.data[0].markdown)
     
 
     def _download_file(self, url: str):
